@@ -39,7 +39,17 @@ class chess:
 	def output(self):
 		for i in range(4):
 			for j in range(8):
-				print(' ',self.kind[i][j],' ',self.col[i][j],end=' ')
+				print(' ',self.kind[i][j],end=' ')
+			print()
+		print("---")
+		for i in range(4):
+			for j in range(8):
+				print(' ',self.col[i][j],end=' ')
+			print()
+		print("----")
+		for i in range(4):
+			for j in range(8):
+				print(' ',self.cover[i][j],end=' ')
 			print()
 	def __init__(self):
 		#random initiation
@@ -92,54 +102,11 @@ class chess:
 	def __inBoard__(self, x, y):
 		return x >= 0 and x < 4 and y >= 0 and y < 8;
 
-	def __moveX__(self, x, op):
-		if op == 0:
-			ret = x - 1
-		elif op == 1:
-			ret = x + 1
-		elif op == 2:
-			ret = x
-		else:
-			ret = x
-		return ret
-
-	def __moveY__(self, y, op):
-		if op == 0:
-			ret = y
-		elif op == 1:
-			ret = y
-		elif op == 2:
-			ret = y - 1
-		else:
-			ret = y + 1
-		return ret
-
-	def __movePX__(self, x, op):
-		if op == 4:
-			ret = x - 2
-		elif op == 5:
-			ret = x + 2
-		elif op == 6:
-			ret = x
-		else:
-			ret = x
-		return ret
-
-	def __movePY__(self, y, op):
-		if op == 4:
-			ret = y
-		elif op == 5:
-			ret = y
-		elif op == 6:
-			ret = y - 2
-		else:
-			ret = y + 2
-		return ret
-
 	def __swap__(self, x, y, xx, yy):
-		swap(self.cover[x][y], self.cover[xx][yy])
-		swap(self.col[x][y], self.col[xx][yy])
-		swap(self.kind[x][y], self.kind[xx][yy])
+		self.cover[x][y], self.cover[xx][yy] = self.cover[xx][yy], self.cover[x][y]
+		self.col[x][y], self.col[xx][yy] = self.col[xx][yy], self.col[x][y]
+		self.kind[xx][yy] = self.kind[x][y]
+		#self.kind[x][y], self.kind[xx][yy] = self.kind[xx][yy], self.kind[x][y]
 
 	def __eat__(self, attack, defend):
 		if attack == 5:
@@ -159,110 +126,120 @@ class chess:
 	def __corss__(self, x, y, xx, yy):
 		if x == xx:
 			if y > yy:
-				if self.cover[x][yy + 1] == -1:
+				if self.__inBoard__(x, yy + 1) and self.cover[x][yy + 1] == -1:
+					ret = False
+				else:
+					ret = True
+			elif y < yy:
+				if self.__inBoard__(x, yy - 1) and self.cover[x][yy - 1] == -1:
 					ret = False
 				else:
 					ret = True
 			else:
-				if self.cover[x][yy - 1] == -1:
-					ret = False
-				else:
-					ret = True
-		else:
+				ret = False
+		elif y == yy:
 			if x > xx:
-				if self.cover[xx + 1][y] == -1:
+				if self.__inBoard__(xx + 1, y) and self.cover[xx + 1][y] == -1:
 					ret = False
 				else:
 					ret = True
+			elif x < xx:
+			 	if self.__inBoard__(xx - 1, y) and self.cover[xx - 1][y] == -1:
+			 		ret = False
+			 	else:
+			 		ret = True
 			else:
-				if self.cover[xx - 1][y] == -1:
-					ret = False
-				else:
-					ret = True
+				ret = False
+		else:
+			ret = False
 		return ret
 
 
-	def check(self, color, res):
-		x, y, op = map(int, res.split(' '))
-		if self.__inBoard__(x, y):
-			if op == -1:
-				if self.cover[x][y] == 0:
-					self.cover[x][y] = 1
-					ret = 'right'
+	def __move__(self, x, y, xx, yy):
+		ret = False
+		if self.kind[x][y] == 5:
+			if self.__corss__(x, y, xx, yy):
+				ret = True
+			else:
+				ret = False
+		else: 
+			if x == xx:
+				if y == yy - 1 or y == yy + 1:
+					ret = True
 				else:
-					ret = 'wrong'
-					error = 'invalid operation'
-			elif op in op_norm:
-				if self.cover[x][y] == 1:
-					if self.col[x][y] == color:
-						xx = self.__moveX__(x, op)
-						yy = self.__moveY__(y, op)
-						if self.__inBoard__(xx, yy) and self.cover[xx][yy] == 1 and self.col[xx][yy] != color:
-							if self.cover[xx][yy] == -1:
-								self.swap(x, y, xx, yy)
-								ret = 'right'
-								error = 'good'
-							else:
-								if self.eat(self.kind[x][y], self.kind[xx][yy]):
-									self.cover[x][y] = -1
-									self.cover[xx][yy] = 1
-									self.col[xx][yy] = color
-									self.kind[xx][yy] = self.kind[x][y]
-									self.cnt[color] = self.cnt[color] - 1
+					ret = False
+			elif y == yy:
+				if x == xx - 1 or x == xx + 1:
+					ret = True
+				else:
+					ret = False
+			else:
+				ret = False
+		return ret
 
-									ret = 'right'
-									error = 'good'
-								else:
-									ret = 'wrong'
-									error = 'cannot eat'
-						else:
-							ret = 'wrong'
-							error = 'invalid operation'
-					else:
-						ret = 'wrong'
-						error = 'invalid operation'
-				else:
-					ret = 'wrong'
-					error = 'invalid operation'
-			elif op in op_pao:
-				if self.cover[x][y] == 1:
-					if self.col[x][y] == color and self.kind[x][y] == 5:
-						xx = self.__movePX__(x, op)
-						yy = self.__movePY__(y, op)
-						if self.__inBoard__(xx, yy) and self.cover[xx][yy] == 1 and self.col[xx][yy] != color:
-							if self.cover[xx][yy] == (color^1):
-								if self.eat(self.kind[x][y], self.kind[xx][yy]) and self.__cross__(x, y, xx, yy):
-									self.cover[x][y] = -1
-									self.cover[xx][yy] = 1
-									self.col[xx][yy] = color
-									self.kind[xx][yy] = self.kind[x][y]
-									self.cnt[color] = self.cnt[color] - 1
-									ret = 'right'
-									error = 'good'
-								else:
-									ret = 'wrong'
-									error = 'invalid operation'
-							else:
-								ret = 'wrong'
-								error = 'invalid operation'
-						else:
-							ret = 'wrong'
-							error = 'invalid operation'
-					else:
-						ret = 'wrong'
-						error = 'invalid operation'
-				else:
-					ret = 'wrong'
-					error = 'invalid operation'
+	def check(self, color, res):
+		#x, y, xx, yy = map(int, res.split(' '))
+		x = res['posx']
+		y = res['posy']
+		xx = res['tox']
+		yy = res['toy']
+		print(color,' ',res['posx'],' ',res['posy'],' ',res['tox'],' ',res['toy'])
+
+		print("-------------------------------")
+		self.output()
+
+
+		if (x == xx and y == yy) and self.__inBoard__(x, y):
+			if self.cover[x][y] == 0:
+				ret = 'right'
+				error = 'good'
+				self.cover[x][y] = 1
 			else:
 				ret = 'wrong'
-				error = 'invalid operation'
+				error = 'Can_Not_Reverse'
+			return ret + ' ' + error
+
+
+		if self.__inBoard__(x, y) and self.__inBoard__(xx, yy) and self.__move__(x, y, xx, yy):
+			if self.cover[x][y] == 1:
+				if self.col[x][y] == color:
+					if self.cover[xx][yy] == 0:
+						ret = 'wrong'
+						error = 'Invalid_Move'
+					else:
+						if self.cover[xx][yy] == -1:
+							self.cover[xx][yy] = 1
+							self.col[xx][yy] = self.col[x][y]
+							self.kind[xx][yy] = self.kind[x][y]
+							self.cover[x][y] = -1
+							ret = 'right'
+							error = 'good'
+						else:
+							if self.__eat__(self.kind[x][y], self.kind[xx][yy]):
+								ret = 'right'
+								error = 'good'
+								self.kind[xx][yy] = self.kind[x][y]
+								self.col[xx][yy] = self.col[x][y]
+								self.cover[xx][yy] = 1
+								self.cover[x][y] = -1
+								self.cnt[color^1] = self.cnt[color^1] - 1
+							else:
+								ret = 'wrong'
+								error = 'Can_Not_Eat'
+				else:
+					ret = 'wrong'
+					error = 'Not_Your_Chess'
+			else:
+				ret = 'wrong'
+				error = 'No_Chess_or_Not_Reverse'
 		else:
 			ret = 'wrong'
-			error = 'invalid pos'
-
-		if cntb == 0 or cntr == 0:
+			error = 'Out_Of_The_Board_or_Invalid_Move'
+		
+		if self.cnt[0] == 0 or self.cnt[1] == 0:
 			ret = 'end'
+			error = 'good'
+		
 
 		return ret + ' ' + error
 
