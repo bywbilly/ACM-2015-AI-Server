@@ -6,7 +6,7 @@
 
 ox X && Linux:
 
-	sudo python3 ./judge.py sample your_ai
+	sudo python3 ./judge.py ./sample ./your_ai
 	
 windows:
 
