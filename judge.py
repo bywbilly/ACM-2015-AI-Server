@@ -11,6 +11,9 @@ from stdio_ipc import ChildProcess
 # 上下左右 0 1 2 3
 # 炮上下左右 4 5 6 7
 
+ff = open('procedure.json', 'w')
+
+
 def action(ai):
 	try:
 		ai.send('action\n')
@@ -53,6 +56,12 @@ def finish(winner, err1, err2):
     with open('result.json', 'w') as f:
         f.write(json.dumps(result))
 
+    procedure = {
+    	'init-board' : init_board,
+    	'step' : Record
+    }
+    ff.write(json.dumps(procedure))
+    #ff.write(json.dumps(Record))
     # exit
     sys.exit(0)
 
@@ -106,9 +115,27 @@ send_id(ai2, id2)
 now_sit = 0
 
 global board
+global init_board
+global Record 
+
+def Record_Chess():
+	for i in range(4):
+		ret = []
+		for j in range(8):
+			ret.append({
+				'kind' : board.kind[i][j],
+				'color' : board.col[i][j]
+			})
+		init_board.append(ret)
+		#ff.write(json.dumps(ret))
+		#ff.write("\n")
 
 board = chess.chess()
 
+Record = []
+init_board = []
+
+Record_Chess()
 
 while True:
 	if now_sit == 0:
@@ -118,7 +145,8 @@ while True:
 		work(id1, res1)
 		message(ai1, id1, res1)
 		message(ai2, id1, res1)
-
+		Record.append(res1)
+		#Record_Procedure(res1)
 		#now_sit = 1 - now_sit
 	else:
 		res2 = action(ai2)
@@ -127,7 +155,8 @@ while True:
 		work(id2, res2)
 		message(ai1, id2, res2)
 		message(ai2, id2, res2)
-
+		Record.append(res2)
+		#Record_Procedure(res2)
 		#now_sit = 1 - now_sit
 	now_sit = 1 - now_sit
 
