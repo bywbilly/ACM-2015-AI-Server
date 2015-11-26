@@ -2,11 +2,13 @@
 
 请下载**judge.py** **chess.py** **sample**
 
+同时请去 https://github.com/bywbilly/py-stdio-ipc.git 下载**stdio_ipc.py**
+
 然后将它们放在同一路径下，然后按照如下命令执行
 
 ox X && Linux:
 
-	sudo python3 ./judge.py ./sample ./your_ai
+	sudo python3 ./judge.py sample your_ai
 	
 windows:
 
