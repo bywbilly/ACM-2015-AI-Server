@@ -183,10 +183,10 @@ class chess:
 		y = res['posy']
 		xx = res['tox']
 		yy = res['toy']
-		print(color,' ',res['posx'],' ',res['posy'],' ',res['tox'],' ',res['toy'])
+		#print(color,' ',res['posx'],' ',res['posy'],' ',res['tox'],' ',res['toy'])
 
-		print("-------------------------------")
-		self.output()
+		#print("-------------------------------")
+		#self.output()
 
 
 		if (x == xx and y == yy) and self.__inBoard__(x, y):
