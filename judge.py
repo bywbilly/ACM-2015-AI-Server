@@ -132,6 +132,8 @@ def Record_Chess():
 
 board = chess.chess()
 
+board.output()
+
 Record = []
 init_board = []
 
