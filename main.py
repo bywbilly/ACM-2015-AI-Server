@@ -25,7 +25,8 @@ def action(ai):
 def message(ai, id, res):
 	x = res['posx']
 	y = res['posy']
-	ai.send('message\n%d %d %d %d %d\n' % (id, res['posx'], res['posy'], op, board.col[x][y]))
+	ai.send('message\n%d %d %d %d %d %d\n' % (id, res['posx'], res['posy'], op, board.col[x][y]), board.kind[x][y])
+
 def send_id(ai, id):
 	ai.send('id\n%d\n' % id)
 
