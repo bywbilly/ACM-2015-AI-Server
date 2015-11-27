@@ -82,7 +82,7 @@ def work(color, res):
             res['err'] = error
             finish(0, '', res)
     elif ret == 'end':
-        finish(color, '', '')
+        finish(color_ai[color], '', '')
 
 def check_both(ai0_success, ai1_success, res1, res2):
     if not ai0_success and not ai1_success:
@@ -110,12 +110,15 @@ def Record_Chess():
         init_board.append(ret)
 
 def judge():
-    global board, id0, id1, ai0, ai1, name0, name1, steps, Record, init_board
+    global board, id0, id1, ai0, ai1, name0, name1, color_ai, steps, Record, init_board
 
     # spawn AI
     seed_base = int(time.time() * 1e3) % 10000000000
     id0 = seed_base % 2
     id1 = 1 - id0
+    color_ai = [None, None]
+    color_ai[0] = 0 if id0 == 0 else 1
+    color_ai[1] = 1 - color_ai[0]
     ai0 = spawnAI([sys.argv[1], '%.0f' % (seed_base+0)])
     ai1 = spawnAI([sys.argv[2], '%.0f' % (seed_base+1)])
     check_both(type(ai0) is not dict, type(ai1) is not dict, ai0, ai1)
@@ -139,20 +142,20 @@ def judge():
         steps += 1
         if now_sit == 0:
             res1 = action(ai0)
+            Record.append(res1)
             check_both('err' not in res1, True, res1,'')
             
             work(id0, res1)
-            Record.append(res1)
             message(ai0, id0, res1)
             message(ai1, id0, res1)
 
             now_sit = now_sit^1
         else:
             res2 = action(ai1)
+            Record.append(res2)
             check_both(True, 'err' not in res2, '', res2)
 
             work(id1, res2)
-            Record.append(res2)
             message(ai0, id1, res2)
             message(ai1, id1, res2)
 
