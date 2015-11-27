@@ -97,7 +97,6 @@ class chess:
 		for obj in blue:
 			self.kind[obj[0]][obj[1]] = Hash(choose[cnt])
 			cnt += 1
-		random.shuffle(self.kind);
 
 	def __inBoard__(self, x, y):
 		return x >= 0 and x < 4 and y >= 0 and y < 8;
