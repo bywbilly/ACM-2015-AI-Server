@@ -13,6 +13,10 @@ from stdio_ipc import ChildProcess
 
 ff = open('procedure.json', 'w')
 
+global red
+global black
+
+
 
 def action(ai):
 	try:
@@ -65,6 +69,7 @@ def finish(winner, err1, err2):
     # exit
     sys.exit(0)
 
+
 def work(color, res):
 	info = board.check(color, res)
 	ret, error = info.split(' ')
@@ -78,7 +83,11 @@ def work(color, res):
 			res['err'] = error
 			finish(0, '', res)
 	elif ret == 'end':
-		finish(color, '', '')
+		if color == 0:
+			people = red
+		else:
+			people = black
+		finish(people , '', '')
 
 def check_both(ai1_success, ai2_success, res1, res2):
     if not ai1_success and not ai2_success:
@@ -104,6 +113,12 @@ if len(sys.argv) != 3:
 seed_base = int(time.time() * 1e3) % 10000000000
 id1 = seed_base % 2
 id2 = 1 - id1
+if id1 == 0:
+	red = 1
+	black = 2
+else:
+	red = 2
+	black = 1
 ai1 = spawnAI([sys.argv[1], '%.0f' % (seed_base+0)])
 ai2 = spawnAI([sys.argv[2], '%.0f' % (seed_base+1)])
 check_both(type(ai1) is not dict, type(ai2) is not dict, ai1, ai2)
@@ -117,6 +132,7 @@ now_sit = 0
 global board
 global init_board
 global Record 
+
 
 def Record_Chess():
 	for i in range(4):
