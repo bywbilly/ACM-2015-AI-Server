@@ -114,11 +114,11 @@ seed_base = int(time.time() * 1e3) % 10000000000
 id1 = seed_base % 2
 id2 = 1 - id1
 if id1 == 0:
-	red = 1
-	black = 2
-else:
-	red = 2
+	red = 0
 	black = 1
+else:
+	red = 1
+	black = 0
 ai1 = spawnAI([sys.argv[1], '%.0f' % (seed_base+0)])
 ai2 = spawnAI([sys.argv[2], '%.0f' % (seed_base+1)])
 check_both(type(ai1) is not dict, type(ai2) is not dict, ai1, ai2)
