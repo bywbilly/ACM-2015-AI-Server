@@ -5,6 +5,7 @@ import time
 import json
 import chess
 import threading
+import locale
 from queue import Empty
 from pprint import pprint
 from stdio_ipc import ChildProcess
@@ -38,6 +39,9 @@ def send_id(ai, id):
         name = ai.recv(timeout=1).strip()
     except Empty as e:
         return { 'err': 'timeout' }
+    except Exception as e:
+        print(e)
+        return { 'err' : str(e) }
     return name
 
 def finish(winner, err0, err1):
@@ -61,7 +65,9 @@ def finish(winner, err0, err1):
         'init-board' : init_board,
         'step' : Record
     }
-    pprint(result)
+
+    if not is_p2dv:
+        pprint(result)
     with open('result.json', 'w') as f:
         f.write(json.dumps(result))
 
@@ -181,7 +187,7 @@ def p2dv():
         sys.stderr.flush()
 
 def main():
-    global running
+    global running, is_p2dv
 
     if not (len(sys.argv) in [3, 4]):
         print('usage:   ./main.py ai0Path ai1Path')
@@ -192,10 +198,13 @@ def main():
     running = True
 
     if len(sys.argv) == 4 and sys.argv[3] == 'p2dv':
+        is_p2dv = True
         p2dv()
     else:
+        is_p2dv = False
         judge()
 
 
+locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 steps = 0
 main()
