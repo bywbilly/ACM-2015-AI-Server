@@ -118,6 +118,16 @@ def Record_Chess():
 def judge():
     global board, id0, id1, ai0, ai1, name0, name1, color_ai, steps, Record, init_board
 
+    # start working
+    steps = 0
+    now_sit = 0
+    Record = []
+    init_board = []
+    board = chess.chess()
+
+    # record chess
+    Record_Chess()
+
     # spawn AI
     seed_base = int(time.time() * 1e3) % 10000000000
     id0 = seed_base % 2
@@ -132,18 +142,8 @@ def judge():
     # send ID and get name
     name0 = send_id(ai0, id0)
     name1 = send_id(ai1, id1)
-    check_both(type(name0) is not dict, type(name1) is not dict, ai0, ai1)
-
-    # start working
-    steps = 0
-    now_sit = 0
-    Record = []
-    init_board = []
-    board = chess.chess()
-
-    # record chess
-    Record_Chess()
-
+    check_both(type(name0) is not dict, type(name1) is not dict, name0, name1)
+    
     while steps < 2000:
         steps += 1
         if now_sit == 0:
