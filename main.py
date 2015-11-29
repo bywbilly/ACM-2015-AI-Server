@@ -92,11 +92,11 @@ def work(color, res):
 
 def check_both(ai0_success, ai1_success, res1, res2):
     if not ai0_success and not ai1_success:
-        finish(0, res1['err'], res2['err'])
+        finish(2, res1['err'], res2['err'])
     elif not ai0_success and ai1_success:
-        finish(2, res1['err'], '')
+        finish(1, res1['err'], '')
     elif not ai1_success and ai0_success:
-        finish(1, '', res2['err'])
+        finish(0, '', res2['err'])
 
 def spawnAI(args):
     try:
@@ -140,10 +140,12 @@ def judge():
     check_both(type(ai0) is not dict, type(ai1) is not dict, ai0, ai1)
 
     # send ID and get name
-    name0 = send_id(ai0, id0)
-    name1 = send_id(ai1, id1)
-    check_both(type(name0) is not dict, type(name1) is not dict, name0, name1)
-    
+    res0 = send_id(ai0, id0)
+    res1 = send_id(ai1, id1)
+    name0 = res0 if type(res0) is not dict else '[Unknown]'
+    name1 = res1 if type(res1) is not dict else '[Unknown]'
+    check_both(type(res0) is not dict, type(res1) is not dict, res0, res1)
+
     while steps < 2000:
         steps += 1
         if now_sit == 0:
