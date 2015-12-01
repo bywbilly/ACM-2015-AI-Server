@@ -167,7 +167,14 @@ class chess:
 			elif y == yy:
 				if x == xx - 1 or x == xx + 1:
 					ret = True
-			if ret == False:
+			jump = False
+			if x == xx:
+				if y == yy - 2 or y == yy + 2:
+					jump = True
+			elif y == yy:
+				if x == xx - 2 or x == xx + 2:
+					jump = True
+			if jump == True:
 				if x == xx:
 					if y == yy + 2 or y == yy - 2:
 						if self.__corss__(x, y, xx, yy):
