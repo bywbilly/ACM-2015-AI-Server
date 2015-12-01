@@ -82,10 +82,10 @@ def work(color, res):
     elif ret == 'wrong':
         if color == 0:
             res['err'] = error
-            finish(1, '', '')
+            finish(color_ai[1], '', '')
         else:
             res['err'] = error
-            finish(0, '', '')
+            finish(color_ai[0], '', '')
     elif ret == 'end':
         finish(color_ai[color], '', '')
 
