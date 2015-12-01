@@ -76,17 +76,16 @@ def finish(winner, err0, err1):
     sys.exit(0)
 
 def work(color, res):
-    info = board.check(color, res)
-    ret, error = info.split(' ')
+    ret, error = board.check(color, res)
     if ret == 'right':
         pass
     elif ret == 'wrong':
         if color == 0:
             res['err'] = error
-            finish(1, res, '')
+            finish(1, '', '')
         else:
             res['err'] = error
-            finish(0, '', res)
+            finish(0, '', '')
     elif ret == 'end':
         finish(color_ai[color], '', '')
 
