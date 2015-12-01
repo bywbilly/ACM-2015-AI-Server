@@ -18,6 +18,8 @@ import random
 op_norm = [0, 1, 2 ,3]
 op_pao = [4, 5, 6, 7]
 
+global flag
+
 def Hash(num):
 		if num == 0: 
 			ret = 0
@@ -159,16 +161,24 @@ class chess:
 	def __move__(self, x, y, xx, yy):
 		ret = False
 		if self.kind[x][y] == 5:
-			if self.__corss__(x, y, xx, yy):
-				ret = True
-			else:
-				ret = False
 			if x == xx:
 				if y == yy - 1 or y == yy + 1:
 					ret = True
 			elif y == yy:
 				if x == xx - 1 or x == xx + 1:
 					ret = True
+			if ret == False:
+				if x == xx:
+					if y == yy + 2 or y == yy - 2:
+						if self.__corss__(x, y, xx, yy):
+							ret = True
+							flag = True
+				elif y == yy:
+					if x == xx + 2 or x == xx - 2:
+						if self.__corss__(x, y, xx, yy):
+							ret = True
+							flag = True
+
 		else: 
 			if x == xx:
 				if y == yy - 1 or y == yy + 1:
@@ -207,10 +217,12 @@ class chess:
 			return ret, error
 
 
+		flag = False
+
 		if self.__inBoard__(x, y) and self.__inBoard__(xx, yy) and self.__move__(x, y, xx, yy):
 			if self.cover[x][y] == 1:
 				if self.col[x][y] == color:
-					if self.cover[xx][yy] == 0:
+					if self.cover[xx][yy] == 0 and flag == True:
 						ret = 'wrong'
 						error = 'Invalid Move'
 					else:
