@@ -108,6 +108,8 @@ class chess:
 		#self.kind[x][y], self.kind[xx][yy] = self.kind[xx][yy], self.kind[x][y]
 
 	def __eat__(self, attack, defend):
+		if attack == 0 and defend == 6:
+			return False
 		if attack == 5:
 			ret = True
 		elif attack == 6:
@@ -195,7 +197,7 @@ class chess:
 				self.cover[x][y] = 1
 			else:
 				ret = 'wrong'
-				error = 'Can_Not_Reverse'
+				error = 'Can_Not_Flip'
 			return ret + ' ' + error
 
 
@@ -207,6 +209,10 @@ class chess:
 						error = 'Invalid_Move'
 					else:
 						if self.cover[xx][yy] == -1:
+							if self.kind[x][y] == 5:
+								ret = 'wrong'
+								error = 'Invalid_Move'
+								return ret + ' ' + error
 							self.cover[xx][yy] = 1
 							self.col[xx][yy] = self.col[x][y]
 							self.kind[xx][yy] = self.kind[x][y]
@@ -230,7 +236,7 @@ class chess:
 					error = 'Not_Your_Chess'
 			else:
 				ret = 'wrong'
-				error = 'No_Chess_or_Not_Reverse'
+				error = 'No_Chess_or_Not_Flip'
 		else:
 			ret = 'wrong'
 			error = 'Out_Of_The_Board_or_Invalid_Move'
