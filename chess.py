@@ -164,6 +164,12 @@ class chess:
 				ret = True
 			else:
 				ret = False
+			if x == xx:
+				if y == yy - 1 or y == yy + 1:
+					ret = True
+			elif y == yy:
+				if x == xx - 1 or x == xx + 1:
+					ret = True
 		else: 
 			if x == xx:
 				if y == yy - 1 or y == yy + 1:
