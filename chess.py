@@ -97,7 +97,6 @@ class chess:
 		for obj in blue:
 			self.kind[obj[0]][obj[1]] = Hash(choose[cnt])
 			cnt += 1
-		#random.shuffle(self.kind);
 
 	def __inBoard__(self, x, y):
 		return x >= 0 and x < 4 and y >= 0 and y < 8;
@@ -198,8 +197,8 @@ class chess:
 				self.cover[x][y] = 1
 			else:
 				ret = 'wrong'
-				error = 'Can_Not_Reverse'
-			return ret + ' ' + error
+				error = 'Cannot Flip'
+			return ret, error
 
 
 		if self.__inBoard__(x, y) and self.__inBoard__(xx, yy) and self.__move__(x, y, xx, yy):
@@ -207,13 +206,13 @@ class chess:
 				if self.col[x][y] == color:
 					if self.cover[xx][yy] == 0:
 						ret = 'wrong'
-						error = 'Invalid_Move'
+						error = 'Invalid Move'
 					else:
 						if self.cover[xx][yy] == -1:
 							if self.kind[x][y] == 5:
 								ret = 'wrong'
-								error = 'Invalid_Move'
-								return ret + ' ' + error
+								error = 'Invalid Move'
+								return ret, error
 							self.cover[xx][yy] = 1
 							self.col[xx][yy] = self.col[x][y]
 							self.kind[xx][yy] = self.kind[x][y]
@@ -231,23 +230,23 @@ class chess:
 								self.cnt[color^1] = self.cnt[color^1] - 1
 							else:
 								ret = 'wrong'
-								error = 'Can_Not_Eat'
+								error = 'Can Not Eat'
 				else:
 					ret = 'wrong'
-					error = 'Not_Your_Chess'
+					error = 'Not Your Chess'
 			else:
 				ret = 'wrong'
-				error = 'No_Chess_or_Not_Reverse'
+				error = 'No Chess or Not Flipped Yet'
 		else:
 			ret = 'wrong'
-			error = 'Out_Of_The_Board_or_Invalid_Move'
+			error = 'Out of the Board or Invalid Move'
 		
 		if self.cnt[0] == 0 or self.cnt[1] == 0:
 			ret = 'end'
 			error = 'good'
 		
 
-		return ret + ' ' + error
+		return ret, error
 
 	
 

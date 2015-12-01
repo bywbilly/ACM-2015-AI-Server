@@ -5,6 +5,7 @@ import time
 import json
 import chess
 import threading
+import locale
 from queue import Empty
 from pprint import pprint
 from stdio_ipc import ChildProcess
@@ -26,20 +27,11 @@ def action(ai):
     return { 'posx': posx, 'posy': posy, 'tox': tox, 'toy': toy }
 
 def message(ai, id, res):
-<<<<<<< HEAD
-	x = res['posx']
-	y = res['posy']
-	ai.send('message\n%d %d %d %d %d %d\n' % (id, res['posx'], res['posy'], op, board.col[x][y]), board.kind[x][y])
-
-def send_id(ai, id):
-	ai.send('id\n%d\n' % id)
-=======
     x = res['posx']
     y = res['posy']
     xx = res['tox']
     yy = res['toy']
     ai.send('message\n%d %d %d %d %d %d\n' % (x, y, xx, yy, board.col[x][y], board.kind[x][y]))
->>>>>>> 49d212eb0c776709af59ed7bf4509869a129c124
 
 def send_id(ai, id):
     try:
@@ -47,6 +39,9 @@ def send_id(ai, id):
         name = ai.recv(timeout=1).strip()
     except Empty as e:
         return { 'err': 'timeout' }
+    except Exception as e:
+        print(e)
+        return { 'err' : str(e) }
     return name
 
 def finish(winner, err0, err1):
@@ -70,7 +65,9 @@ def finish(winner, err0, err1):
         'init-board' : init_board,
         'step' : Record
     }
-    pprint(result)
+
+    if not is_p2dv:
+        pprint(result)
     with open('result.json', 'w') as f:
         f.write(json.dumps(result))
 
@@ -79,27 +76,26 @@ def finish(winner, err0, err1):
     sys.exit(0)
 
 def work(color, res):
-    info = board.check(color, res)
-    ret, error = info.split(' ')
+    ret, error = board.check(color, res)
     if ret == 'right':
         pass
     elif ret == 'wrong':
         if color == 0:
             res['err'] = error
-            finish(1, res, '')
+            finish(1, '', '')
         else:
             res['err'] = error
-            finish(0, '', res)
+            finish(0, '', '')
     elif ret == 'end':
-        finish(color, '', '')
+        finish(color_ai[color], '', '')
 
 def check_both(ai0_success, ai1_success, res1, res2):
     if not ai0_success and not ai1_success:
-        finish(0, res1['err'], res2['err'])
+        finish(2, res1['err'], res2['err'])
     elif not ai0_success and ai1_success:
-        finish(2, res1['err'], '')
+        finish(1, res1['err'], '')
     elif not ai1_success and ai0_success:
-        finish(1, '', res2['err'])
+        finish(0, '', res2['err'])
 
 def spawnAI(args):
     try:
@@ -119,20 +115,7 @@ def Record_Chess():
         init_board.append(ret)
 
 def judge():
-    global board, id0, id1, ai0, ai1, name0, name1, steps, Record, init_board
-
-    # spawn AI
-    seed_base = int(time.time() * 1e3) % 10000000000
-    id0 = seed_base % 2
-    id1 = 1 - id0
-    ai0 = spawnAI([sys.argv[1], '%.0f' % (seed_base+0)])
-    ai1 = spawnAI([sys.argv[2], '%.0f' % (seed_base+1)])
-    check_both(type(ai0) is not dict, type(ai1) is not dict, ai0, ai1)
-
-    # send ID and get name
-    name0 = send_id(ai0, id0)
-    name1 = send_id(ai1, id1)
-    check_both(type(name0) is not dict, type(name1) is not dict, ai0, ai1)
+    global board, id0, id1, ai0, ai1, name0, name1, color_ai, steps, Record, init_board
 
     # start working
     steps = 0
@@ -144,24 +127,42 @@ def judge():
     # record chess
     Record_Chess()
 
+    # spawn AI
+    seed_base = int(time.time() * 1e3) % 10000000000
+    id0 = seed_base % 2
+    id1 = 1 - id0
+    color_ai = [None, None]
+    color_ai[0] = 0 if id0 == 0 else 1
+    color_ai[1] = 1 - color_ai[0]
+    ai0 = spawnAI([sys.argv[1], '%.0f' % (seed_base+0)])
+    ai1 = spawnAI([sys.argv[2], '%.0f' % (seed_base+1)])
+    check_both(type(ai0) is not dict, type(ai1) is not dict, ai0, ai1)
+
+    # send ID and get name
+    res0 = send_id(ai0, id0)
+    res1 = send_id(ai1, id1)
+    name0 = res0 if type(res0) is not dict else '[Unknown]'
+    name1 = res1 if type(res1) is not dict else '[Unknown]'
+    check_both(type(res0) is not dict, type(res1) is not dict, res0, res1)
+
     while steps < 2000:
         steps += 1
         if now_sit == 0:
             res1 = action(ai0)
+            Record.append(res1)
             check_both('err' not in res1, True, res1,'')
             
             work(id0, res1)
-            Record.append(res1)
             message(ai0, id0, res1)
             message(ai1, id0, res1)
 
             now_sit = now_sit^1
         else:
             res2 = action(ai1)
+            Record.append(res2)
             check_both(True, 'err' not in res2, '', res2)
 
             work(id1, res2)
-            Record.append(res2)
             message(ai0, id1, res2)
             message(ai1, id1, res2)
 
@@ -187,7 +188,7 @@ def p2dv():
         sys.stderr.flush()
 
 def main():
-    global running
+    global running, is_p2dv
 
     if not (len(sys.argv) in [3, 4]):
         print('usage:   ./main.py ai0Path ai1Path')
@@ -198,10 +199,13 @@ def main():
     running = True
 
     if len(sys.argv) == 4 and sys.argv[3] == 'p2dv':
+        is_p2dv = True
         p2dv()
     else:
+        is_p2dv = False
         judge()
 
 
+locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 steps = 0
 main()

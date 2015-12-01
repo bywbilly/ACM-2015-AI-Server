@@ -1,19 +1,18 @@
-##How to use it?
+## 使用说明
 
-请下载**judge.py** **chess.py** **sample**
+`git clone` 或者点击 *Download ZIP* 以下载本仓库。
 
-同时请去 https://github.com/bywbilly/py-stdio-ipc.git 下载**stdio_ipc.py**
+Sample AI 可以在以下地址下载： <https://gist.github.com/abcdabcd987/d6d284227f5c5953c857>
 
-然后将它们放在同一路径下，然后按照如下命令执行
+Linux / OS X 用户可以直接使用下面命令运行：
 
-ox X && Linux:
+```
+$ g++ -std=c++11 -O2 -Wall sample_ai.cc -o sample_ai
+$ ./main.py ./sample_ai ./sample_ai
+```
 
-	sudo python3 judge.py sample your_ai
-	
-windows:
+Windows 用户请下载 Python 3 之后，用 `cmd` 打开，使用类似的方式运行。
 
-	python judge.py sample your_ai
-	
-我在sever中标准输出了每一步的决策信息和棋盘信息，每一个回合你的程序的输出和读入都可以在**stdin.log** **stdout.log**看到 错误信息可以在**stderr.log**看到 结果信息可以在**result.json**看到
+本地评测结束后，在终端中会显示比赛结果以及中间的过程，这个结果在 `result.json` 中也保存了一份。另外，当前目录下会产生 `ai?_std???.log` 代表每个 AI 的 `stdin / stdout / stderr` 记录。
 
 #Have Fun!
