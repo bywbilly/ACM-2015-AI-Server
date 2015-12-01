@@ -222,14 +222,14 @@ class chess:
 		if self.__inBoard__(x, y) and self.__inBoard__(xx, yy) and self.__move__(x, y, xx, yy):
 			if self.cover[x][y] == 1:
 				if self.col[x][y] == color:
-					if self.cover[xx][yy] == 0 and flag == True:
+					if self.cover[xx][yy] == 0:
 						ret = 'wrong'
 						error = 'Invalid Move'
 					else:
 						if self.cover[xx][yy] == -1:
-							if self.kind[x][y] == 5:
+							if self.kind[x][y] == 5 and flag == True:
 								ret = 'wrong'
-								error = 'Invalid Move'
+								error = 'Invalid Move of Pao'
 								return ret, error
 							self.cover[xx][yy] = 1
 							self.col[xx][yy] = self.col[x][y]
