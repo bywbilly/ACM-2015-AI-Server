@@ -160,7 +160,6 @@ class chess:
 
 	def __move__(self, x, y, xx, yy):
 		global flag
-		flag = False
 		ret = False
 		if self.kind[x][y] == 5:
 			if x == xx:
@@ -225,6 +224,7 @@ class chess:
 				error = 'Cannot Flip'
 			return ret, error
 
+		flag = False
 
 		if self.__inBoard__(x, y) and self.__inBoard__(xx, yy) and self.__move__(x, y, xx, yy):
 			if self.cover[x][y] == 1:
