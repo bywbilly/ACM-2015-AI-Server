@@ -224,6 +224,7 @@ class chess:
 				error = 'Cannot Flip'
 			return ret, error
 
+		global flag 
 		flag = False
 
 		if self.__inBoard__(x, y) and self.__inBoard__(xx, yy) and self.__move__(x, y, xx, yy):
@@ -245,6 +246,10 @@ class chess:
 							ret = 'right'
 							error = 'good'
 						else:
+							if self.col[xx][yy] == color:
+								ret = 'wrong'
+								error = 'Do not eat yourself'
+								return ret, error
 							if self.kind[x][y] == 5 and flag == False:
 								ret = 'wrong'
 								error = 'Pao Can Not Eat'
