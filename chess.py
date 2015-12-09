@@ -18,7 +18,7 @@ import random
 op_norm = [0, 1, 2 ,3]
 op_pao = [4, 5, 6, 7]
 
-global flag
+
 
 def Hash(num):
 		if num == 0: 
@@ -159,6 +159,8 @@ class chess:
 
 
 	def __move__(self, x, y, xx, yy):
+		global flag
+		flag = False
 		ret = False
 		if self.kind[x][y] == 5:
 			if x == xx:
@@ -184,7 +186,7 @@ class chess:
 					if x == xx + 2 or x == xx - 2:
 						if self.__corss__(x, y, xx, yy):
 							ret = True
-							flag = True
+							flag = True	
 
 		else: 
 			if x == xx:
@@ -223,8 +225,6 @@ class chess:
 				error = 'Cannot Flip'
 			return ret, error
 
-
-		flag = False
 
 		if self.__inBoard__(x, y) and self.__inBoard__(xx, yy) and self.__move__(x, y, xx, yy):
 			if self.cover[x][y] == 1:
