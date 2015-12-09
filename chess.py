@@ -173,7 +173,7 @@ class chess:
 					jump = True
 			elif y == yy:
 				if x == xx - 2 or x == xx + 2:
-					jump = True
+					jump = True	
 			if jump == True:
 				if x == xx:
 					if y == yy + 2 or y == yy - 2:
@@ -245,6 +245,10 @@ class chess:
 							ret = 'right'
 							error = 'good'
 						else:
+							if self.kind[x][y] == 5 and flag == False:
+								ret = 'wrong'
+								error = 'Pao Can Not Eat'
+								return ret, error
 							if self.__eat__(self.kind[x][y], self.kind[xx][yy]):
 								ret = 'right'
 								error = 'good'
